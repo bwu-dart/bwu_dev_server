@@ -18,7 +18,7 @@ class DevServer {
   final io.Directory directory;
   final io.InternetAddress _address;
   final Map<String, String> _corsHeaders;
-  final FileCache fileCache = new FileCache();
+  FileCache _fileCache;
 
   Map<String, String> get corsHeaders => new UnmodifiableMapView(_corsHeaders);
 
@@ -42,8 +42,9 @@ class DevServer {
           s_cors.createCorsHeadersMiddleware(corsHeaders: corsHeaders));
     }
 
+    _fileCache = new FileCache([io.Directory.current]);
     pipeline = pipeline
-        .addMiddleware(createCacheMiddleware(new FileCache()))
+        .addMiddleware(createCacheMiddleware(_fileCache))
         .addMiddleware(createPackagesMiddleware(new PackageMaps(directory)));
 
 //    Cascade cascade = new Cascade();
